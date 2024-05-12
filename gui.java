@@ -24,8 +24,8 @@ public class gui extends JFrame implements ActionListener {
         textField.setEditable(false);
         // create number button panel:
         JPanel numbersPanel = new JPanel();
-        numbersPanel.setBounds(textField.getX(), textField.getY() + textField.getHeight() + 20, fieldwidth * 3 / 4, fieldwidth + 5);
-        //   ^^^ due to some calculations height must be bigger than (4/3)(width) .. the most simple way is adding a value like +5 to (4/3)(width)
+        numbersPanel.setBounds(textField.getX(), textField.getY() + textField.getHeight() + 20, fieldwidth * 3 / 4, fieldwidth + 4);
+        //   ^^^ due to some calculations height must be bigger than (3/4)(width) .. the most simple way is adding a value like +4 to (3/4)(width)
         numButtons = numButtonsCreator();
         funcButtons = funcButtonsCreator();
         int spaceBetweenButtons;
@@ -81,7 +81,10 @@ public class gui extends JFrame implements ActionListener {
         Integer index = Arrays.asList(numButtons).indexOf(e.getSource());
         if (index >= 0) addText(index.toString());//if it's number
         else if(e.getSource() == factor)textField.setText(fac(Double.parseDouble(textField.getText())).toString());
-        else if (e.getSource() == clear)textField.setText("");
+        else if (e.getSource() == clear){
+            result = 0;
+            textField.setText("");
+        }
         else if (e.getSource() == pow)changeResult('^');
         else if (e.getSource() == rad)textField.setText(String.valueOf(Math.sqrt(Double.parseDouble(textField.getText()))));
         else if (e.getSource() == log)textField.setText(String.valueOf(Math.log10(Double.parseDouble(textField.getText()))));
@@ -100,7 +103,7 @@ public class gui extends JFrame implements ActionListener {
             dotUsed = true;
         } else {     //  << + - * / = >>
             if (e.getSource() == eq) {
-                if(op == '/' && Double.parseDouble(textField.getText()) == 0)textField.setText("Invalid /0");
+                if(op == '*' && Double.parseDouble(textField.getText()) == 0)textField.setText("Invalid /0");
                 else{
                     changeResult(op);
                     textField.setText(Double.toString(result));
@@ -183,17 +186,18 @@ public class gui extends JFrame implements ActionListener {
                 textField.setText("");
                 break;
             case '/':
-                if (Double.parseDouble(textField.getText()) != 0) {
-                    result /= Double.parseDouble(textField.getText());
-                    op = operatorChar;
-                    textField.setText("");
-                }
-                break;
-            case '*':
                 result *= Double.parseDouble(textField.getText());
                 op = operatorChar;
                 textField.setText("");
                 break;
+            case '*':
+
+                if (Double.parseDouble(textField.getText()) != 0) {
+                result /= Double.parseDouble(textField.getText());
+                op = operatorChar;
+                textField.setText("");
+            }
+            break;
             case '^':
                 result = Math.pow(result,Double.parseDouble(textField.getText()));
                 System.out.println(result);
@@ -217,7 +221,9 @@ public class gui extends JFrame implements ActionListener {
         }
     }
     Double fac(double inp){
+        System.out.println(inp + "*");
         if (inp == 0) return 1.0;
-        else return inp*(inp-1);
+        //else return inp*(inp-1);
+        else return inp*fac(inp-1);
     }
 }
